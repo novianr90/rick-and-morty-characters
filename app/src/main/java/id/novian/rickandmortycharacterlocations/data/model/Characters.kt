@@ -30,3 +30,24 @@ val characterSample = Character(
     url = "https://rickandmortyapi.com/api/character/1",
     episode = listOf()
 )
+
+val emptyCharacter = Character(
+    name = "",
+    status = "",
+    species = "",
+    type = "",
+    gender = "",
+    origin = Origin(
+        name = "",
+        url = ""
+    ),
+    location = Location(
+        name = "",
+        url = ""
+    ),
+    image = "",
+    id = 1,
+    created = "",
+    url = "",
+    episode = listOf()
+)

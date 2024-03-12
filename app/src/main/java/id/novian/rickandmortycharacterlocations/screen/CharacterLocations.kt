@@ -22,7 +22,7 @@ import id.novian.rickandmortycharacterlocations.data.model.Character
 private fun LocationItem(
     location: String,
     characters: List<Character>,
-    onCharacterClick: (Character) -> Unit,
+    onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {

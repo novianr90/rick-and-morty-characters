@@ -8,6 +8,8 @@ import javax.inject.Inject
 
 interface ApiRepository {
     suspend fun getCharacters(): List<Character>
+
+    suspend fun getCharacterById(id: Int): Character
 }
 
 class ApiRepositoryImpl @Inject constructor(
@@ -16,6 +18,12 @@ class ApiRepositoryImpl @Inject constructor(
     override suspend fun getCharacters(): List<Character> {
         return withContext(Dispatchers.IO) {
             api.getCharacters().characters
+        }
+    }
+
+    override suspend fun getCharacterById(id: Int): Character {
+        return withContext(Dispatchers.IO) {
+            api.getCharacterById(id)
         }
     }
 }

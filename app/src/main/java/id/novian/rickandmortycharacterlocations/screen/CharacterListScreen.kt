@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import id.novian.rickandmortycharacterlocations.data.model.Character
@@ -28,13 +29,15 @@ import id.novian.rickandmortycharacterlocations.viewmodel.CharacterViewModel
 @Composable
 fun CharacterListScreen(
     viewModel: CharacterViewModel = hiltViewModel(),
-    onCharacterClick: (Character) -> Unit
+    navController: NavHostController
 ) {
     val characters by viewModel.characters.collectAsState()
 
     LazyVerticalGrid(columns = GridCells.Fixed(2), content = {
         items(characters) {character ->
-            CharacterItem(character = character, onCharacterClick = onCharacterClick)
+            CharacterItem(character = character, onCharacterClick = {
+                navController.navigate("${Screen.DetailCharacter.route}/${character.id}")
+            })
         }
     })
 }
@@ -44,12 +47,12 @@ fun CharacterListScreen(
 @Composable
 fun CharacterItem(
     character: Character,
-    onCharacterClick: (Character) -> Unit,
+    onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .clickable { onCharacterClick(character) }
+            .clickable { onCharacterClick(character.id) }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -66,7 +69,7 @@ fun CharacterItem(
 @Composable
 fun CharacterItemPreview(
     character: Character = characterSample,
-    onCharacterClick: (Character) -> Unit = {}
+    onCharacterClick: (Int) -> Unit = {}
 ) {
     CharacterItem(character = character, onCharacterClick = onCharacterClick)
 }

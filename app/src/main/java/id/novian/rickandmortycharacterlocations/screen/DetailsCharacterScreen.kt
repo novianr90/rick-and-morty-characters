@@ -14,6 +14,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,17 +24,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import id.novian.rickandmortycharacterlocations.data.model.Character
 import id.novian.rickandmortycharacterlocations.data.model.characterSample
+import id.novian.rickandmortycharacterlocations.viewmodel.CharacterViewModel
 
 @Composable
 fun DetailsCharacterScreen(
-    modifier: Modifier,
-    character: Character,
-    onAssignLocation: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    characterId: Int,
+    viewModel: CharacterViewModel = hiltViewModel()
 ) {
+    val character by viewModel.character.collectAsState()
+
+    LaunchedEffect(key1 = characterId) {
+        viewModel.fetchCharacterById(characterId)
+    }
+
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -41,7 +52,7 @@ fun DetailsCharacterScreen(
         Spacer(modifier = modifier.height(8.dp))
         CharacterDetails(character = character)
         Spacer(modifier = modifier.height(16.dp))
-        CharacterFooter(character = character, onAssignLocation)
+        CharacterFooter(character = character, {})
     }
 }
 
@@ -133,5 +144,5 @@ private fun CharacterFooter(
 @Preview
 @Composable
 fun DetailsCharacterScreenPreview() {
-    DetailsCharacterScreen(modifier = Modifier, character = characterSample) {}
+    DetailsCharacterScreen(characterId = characterSample.id)
 }
