@@ -91,6 +91,11 @@ dependencies {
 
     implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.compose.compiler)
+
+    // room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 }
 
 kapt {

@@ -1,21 +1,18 @@
 package id.novian.rickandmortycharacterlocations.screen
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import id.novian.rickandmortycharacterlocations.data.model.Character
-import id.novian.rickandmortycharacterlocations.viewmodel.CharacterViewModel
 
 sealed class Screen(val route: String) {
     data object CharacterList: Screen("character_list")
     data object DetailCharacter : Screen("character_details")
+    data object AssignLocations: Screen("character_assign_location")
+    data object AddLocation: Screen("add_location")
+    data object ListLocation: Screen("list_locations")
 }
 
 @Composable
@@ -37,7 +34,36 @@ fun AppNavigation(
         ) { backStackEntry ->
             val characterId = backStackEntry.arguments?.getInt("characterId")
             if (characterId != null) {
-                DetailsCharacterScreen(characterId = characterId)
+                DetailsCharacterScreen(characterId = characterId, navController = navController)
+            }
+        }
+        composable(
+            Screen.AssignLocations.route + "/{characterId}",
+            arguments = listOf(
+                navArgument("characterId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val characterId = backStackEntry.arguments?.getInt("characterId")
+            if (characterId != null) {
+                AssignCharacterLocationScreen(characterId = characterId, navController = navController)
+            }
+        }
+        composable(Screen.AddLocation.route) {
+            AddLocationScreen(navController = navController)
+        }
+        composable(
+            Screen.ListLocation.route + "/{locationId}",
+            arguments = listOf(
+                navArgument("locationId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val locationId = it.arguments?.getInt("locationId")
+            if (locationId != null) {
+                ListLocations(locationId = locationId)
             }
         }
     }

@@ -1,5 +1,6 @@
 package id.novian.rickandmortycharacterlocations.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -22,8 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import id.novian.rickandmortycharacterlocations.data.model.Character
-import id.novian.rickandmortycharacterlocations.data.model.characterSample
+import id.novian.rickandmortycharacterlocations.domain.CharacterDomain
+import id.novian.rickandmortycharacterlocations.domain.characterSample
 import id.novian.rickandmortycharacterlocations.viewmodel.CharacterViewModel
 
 @Composable
@@ -46,13 +47,13 @@ fun CharacterListScreen(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun CharacterItem(
-    character: Character,
+    character: CharacterDomain,
     onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .clickable { onCharacterClick(character.id) }
+            .clickable { character.id?.let { onCharacterClick(it) } }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -61,14 +62,14 @@ fun CharacterItem(
             contentDescription = null,
             modifier = modifier.size(50.dp))
         Spacer(modifier = modifier.width(8.dp))
-        Text(text = character.name)
+        character.name?.let { Text(text = it) }
     }
 }
 
 @Preview
 @Composable
 fun CharacterItemPreview(
-    character: Character = characterSample,
+    character: CharacterDomain = characterSample,
     onCharacterClick: (Int) -> Unit = {}
 ) {
     CharacterItem(character = character, onCharacterClick = onCharacterClick)

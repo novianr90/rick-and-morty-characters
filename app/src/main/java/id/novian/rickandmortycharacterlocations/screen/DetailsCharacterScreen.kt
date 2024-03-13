@@ -25,17 +25,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import id.novian.rickandmortycharacterlocations.data.model.Character
-import id.novian.rickandmortycharacterlocations.data.model.characterSample
+import id.novian.rickandmortycharacterlocations.domain.CharacterDomain
+import id.novian.rickandmortycharacterlocations.domain.characterSample
 import id.novian.rickandmortycharacterlocations.viewmodel.CharacterViewModel
 
 @Composable
 fun DetailsCharacterScreen(
     modifier: Modifier = Modifier,
     characterId: Int,
-    viewModel: CharacterViewModel = hiltViewModel()
+    viewModel: CharacterViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
     val character by viewModel.character.collectAsState()
 
@@ -52,14 +55,16 @@ fun DetailsCharacterScreen(
         Spacer(modifier = modifier.height(8.dp))
         CharacterDetails(character = character)
         Spacer(modifier = modifier.height(16.dp))
-        CharacterFooter(character = character, {})
+        CharacterFooter(character = characterId, {
+            navController.navigate("${Screen.AssignLocations.route}/$characterId")
+        })
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun CharacterHeader(
-    character: Character,
+    character: CharacterDomain,
     imageSize: Int,
     modifier: Modifier = Modifier,
     nameSize: Int
@@ -75,29 +80,31 @@ private fun CharacterHeader(
                 .clip(RoundedCornerShape(15.dp))
                 .align(Alignment.CenterHorizontally)
         )
-        Text(
-            text = character.name,
-            fontWeight = FontWeight.Bold,
-            fontSize = nameSize.sp,
-            modifier = modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 10.dp)
-        )
+        character.name?.let {
+            Text(
+                text = it,
+                fontWeight = FontWeight.Bold,
+                fontSize = nameSize.sp,
+                modifier = modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 10.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun CharacterDetails(
-    character: Character,
+    character: CharacterDomain,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(top = 5.dp, start = 12.dp, bottom = 10.dp, end = 12.dp)
     ) {
-        CharacterProperty(label = "Status", value = character.status)
-        CharacterProperty(label = "Species", value = character.species)
-        CharacterProperty(label = "Gender", value = character.gender)
-        CharacterProperty(label = "Origin", value = character.origin.name)
+        character.status?.let { CharacterProperty(label = "Status", value = it) }
+        character.species?.let { CharacterProperty(label = "Species", value = it) }
+        character.gender?.let { CharacterProperty(label = "Gender", value = it) }
+        character.origin?.let { CharacterProperty(label = "Origin", value = it) }
     }
 }
 
@@ -125,7 +132,7 @@ private fun CharacterProperty(
 
 @Composable
 private fun CharacterFooter(
-    character: Character,
+    character: Int,
     onAssignLocation: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -134,15 +141,9 @@ private fun CharacterFooter(
         modifier = modifier.fillMaxSize()
     ) {
         Button(
-            onClick = { onAssignLocation(character.id) }
+            onClick = { onAssignLocation(character) }
         ) {
             Text(text = "Assign Location")
         }
     }
-}
-
-@Preview
-@Composable
-fun DetailsCharacterScreenPreview() {
-    DetailsCharacterScreen(characterId = characterSample.id)
 }
